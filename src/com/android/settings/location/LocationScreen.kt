@@ -61,7 +61,7 @@ open class LocationScreen :
 
     override fun getSummary(context: Context): CharSequence? {
         var locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return if (locationManager.isLocationEnabled) {
+        return if (!LocationEnabler.isGpsHardwareDisabled() && locationManager.isLocationEnabled) {
             context.getString(R.string.location_settings_loading_app_permission_stats)
         } else {
             context.getString(R.string.location_settings_summary_location_off)
@@ -118,7 +118,7 @@ private class LocationStorage(context: Context) : NoOpKeyedObservable<String>(),
     override fun contains(key: String): Boolean = true
 
     override fun <T : Any> getValue(key: String, valueType: Class<T>): T? {
-        return locationManager.isLocationEnabled as T
+        return (!LocationEnabler.isGpsHardwareDisabled() && locationManager.isLocationEnabled) as T
     }
 
     override fun <T : Any> setValue(key: String, valueType: Class<T>, value: T?) {

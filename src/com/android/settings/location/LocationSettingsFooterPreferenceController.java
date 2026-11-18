@@ -95,12 +95,12 @@ public class LocationSettingsFooterPreferenceController extends LocationBasePref
 
     private void updateFooterPreference() {
         StringBuilder footerString = new StringBuilder();
-        if (mLocationEnabled) {
+        if (!LocationEnabler.isGpsHardwareDisabled() && mLocationEnabled) {
             if (!TextUtils.isEmpty(mInjectedFooterString)) {
                 footerString.append(Html.escapeHtml(mInjectedFooterString) + PARAGRAPH_SEPARATOR);
             }
         } else {
-            if (Utils.isVoiceCapable(mContext) || Utils.isSmsMessagingCapable(mContext)) {
+            if (!LocationEnabler.isGpsHardwareDisabled() && (Utils.isVoiceCapable(mContext) || Utils.isSmsMessagingCapable(mContext))) {
                 footerString.append(
                         mContext.getString(
                                 R.string.location_settings_footer_location_off_with_telephony));
@@ -116,9 +116,11 @@ public class LocationSettingsFooterPreferenceController extends LocationBasePref
 
         if (mFooterPreference != null) {
             mFooterPreference.setTitle(Html.fromHtml(footerString.toString()));
-            mFooterPreference.setLearnMoreAction(v -> openLocationLearnMoreLink());
-            mFooterPreference.setLearnMoreText(mContext.getString(
-                    R.string.location_settings_footer_learn_more_content_description));
+            if (!LocationEnabler.isGpsHardwareDisabled()) {
+                mFooterPreference.setLearnMoreAction(v -> openLocationLearnMoreLink());
+                mFooterPreference.setLearnMoreText(mContext.getString(
+                        R.string.location_settings_footer_learn_more_content_description));
+            }
         }
     }
 

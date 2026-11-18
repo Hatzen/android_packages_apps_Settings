@@ -66,6 +66,14 @@ public class LocationSwitchBarController implements OnCheckedChangeListener,
         // Restricted user can't change the location mode, so disable the primary switch. But in
         // some corner cases, the location might still be enabled. In such case the primary switch
         // should be disabled but checked.
+        if (LocationEnabler.isGpsHardwareDisabled()) {
+            if (mValidListener) {
+                mSwitchBar.removeOnSwitchChangeListener(this);
+            }
+            mSwitchBar.setChecked(false);
+            mSwitchBar.setEnabled(false);
+            return;
+        }
         final boolean enabled = mLocationEnabler.isEnabled(mode);
         final int userId = UserHandle.myUserId();
         final RestrictedLockUtils.EnforcedAdmin admin =

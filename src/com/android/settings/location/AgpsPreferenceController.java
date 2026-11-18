@@ -40,7 +40,7 @@ public class AgpsPreferenceController extends LocationBasePreferenceController {
 
     @AvailabilityStatus
     public int getAvailabilityStatus() {
-        return AVAILABLE;
+        return LocationEnabler.isGpsHardwareDisabled() ? UNSUPPORTED_ON_DEVICE : AVAILABLE;
     }
 
     @Override

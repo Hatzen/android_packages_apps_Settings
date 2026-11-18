@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -109,7 +110,17 @@ public class LocationEnabler implements LifecycleObserver, OnStart, OnStop {
     /**
      * Set the device's location enable state
      */
+    public static boolean isGpsHardwareDisabled() {
+        return SystemProperties.getBoolean("ro.vaultos.gps.hardware_disabled", false);
+    }
+
     public void setLocationEnabled(boolean enabled) {
+        if (isGpsHardwareDisabled()) {
+            updateLocationEnabled(mContext, false, UserHandle.myUserId(),
+                    Settings.Secure.LOCATION_CHANGER_SYSTEM_SETTINGS);
+            refreshLocationMode();
+            return;
+        }
         final int currentMode = Settings.Secure.getInt(mContext.getContentResolver(),
             Settings.Secure.LOCATION_MODE, Settings.Secure.LOCATION_MODE_OFF);
 
@@ -133,7 +144,7 @@ public class LocationEnabler implements LifecycleObserver, OnStart, OnStop {
      * Checks if location is enabled, based on mode and restrictions.
      */
     public boolean isEnabled(int mode) {
-        return mode != Settings.Secure.LOCATION_MODE_OFF && !isRestricted();
+        return !isGpsHardwareDisabled() && mode != Settings.Secure.LOCATION_MODE_OFF && !isRestricted();
     }
 
     /**

@@ -95,6 +95,10 @@ public class LocationSettings extends DashboardFragment implements
         final SettingsMainSwitchBar switchBar = activity.getSwitchBar();
         switchBar.setTitle(getContext().getString(R.string.location_settings_primary_switch_title));
         updateChromeSwitchBarPreference(switchBar);
+        if (LocationEnabler.isGpsHardwareDisabled()) {
+            switchBar.setChecked(false);
+            switchBar.setEnabled(false);
+        }
         switchBar.show();
         mSwitchBarController = new LocationSwitchBarController(activity, switchBar,
                 getSettingsLifecycle());

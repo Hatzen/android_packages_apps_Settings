@@ -51,7 +51,7 @@ public class TopLevelLocationPreferenceController extends BasePreferenceControll
 
     @Override
     public CharSequence getSummary() {
-        if (mLocationManager.isLocationEnabled()) {
+        if (!LocationEnabler.isGpsHardwareDisabled() && mLocationManager.isLocationEnabled()) {
             if (sSummary == null) {
                 sSummary = mContext.getString(
                         R.string.location_settings_loading_app_permission_stats);
@@ -75,7 +75,7 @@ public class TopLevelLocationPreferenceController extends BasePreferenceControll
         mPreference = preference;
         refreshSummary(preference);
         // Bail out if location has been disabled, or there's another loading request in progress.
-        if (!mLocationManager.isLocationEnabled() ||
+        if (LocationEnabler.isGpsHardwareDisabled() || !mLocationManager.isLocationEnabled() ||
                 loadingInProgress.get() != 0) {
             return;
         }
